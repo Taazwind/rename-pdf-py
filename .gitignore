@@ -160,3 +160,9 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+.DS_Store
+data/~$25 Grilles d'évaluation Workshop SN2.docx
+data/2025 Grilles d'évaluation Workshop SN2.docx
+data/2025 Grilles d'évaluation Workshop SN2.pdf
+data/testAUTO.xlsx
+data/test.pdf
