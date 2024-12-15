@@ -23,4 +23,7 @@ def extract_pdf_data(url_pdf):
     # Convertir la liste en une chaîne de caractères
     result_string = "_".join(stored_lines)
 
+    # Remplacer les espaces par des underscores
+    result_string = result_string.replace(" ", "_")
+
     return result_string
