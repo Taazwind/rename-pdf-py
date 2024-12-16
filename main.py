@@ -34,7 +34,7 @@ ScreenManager:
         spacing: dp(20)
 
         MDLabel:
-            text: "Cette application permet d'extraire des données de tous les fichiers PDF dans un dossier et de renommer chaque fichier en utilisant les données extraites.\\n\\nFonctionnement de l'application :\\n1. Cliquez sur le bouton 'Naviguer' pour sélectionner un dossier contenant des fichiers PDF.\\n2. Le chemin du dossier sélectionné sera affiché dans le champ de texte.\\n3. Cliquez sur le bouton 'Renommer les PDFs' pour extraire les données de chaque fichier PDF et les renommer.\\n4. Un message de succès s'affichera avec les nouveaux noms des fichiers, ou un message d'erreur s'affichera en cas de problème.\\n5. Cliquez sur le bouton 'Quitter' pour fermer l'application."
+            text: "Cette application permet d'extraire des données de tous les fichiers PDF dans un dossier et de renommer chaque fichier en utilisant les données extraites.\\n\\n\\nFonctionnement de l'application :\\n\\n1. Cliquez sur le bouton 'Naviguer' pour sélectionner un dossier contenant des fichiers PDF.\\n\\n2. Le chemin du dossier sélectionné sera affiché dans le champ de texte.\\n\\n3. Cliquez sur le bouton 'Renommer les PDFs' pour extraire les données de chaque fichier PDF et les renommer.\\n\\n4. Un message de succès s'affichera avec les nouveaux noms des fichiers, ou un message d'erreur s'affichera en cas de problème.\\n\\n5. Cliquez sur le bouton 'Quitter' pour fermer l'application."
             halign: "left"
             size_hint_y: None
             height: self.texture_size[1]
@@ -79,6 +79,7 @@ class RenommagePDFApp(MDApp):
         self.file_manager.show('/Users/tzvetan/')  
 
     def select_path(self, path):
+        # Mettre à jour le chemin du dossier sélectionné dans le champ de texte
         self.root.get_screen('main').ids.folder_path.text = path
         self.selected_folder_path = path
         self.exit_manager()
@@ -115,6 +116,7 @@ class RenommagePDFApp(MDApp):
         self.stop()
 
     def show_dialog(self, title, text):
+        # Afficher une boîte de dialogue avec un titre et un texte
         dialog = MDDialog(
             title=title,
             text=text,
