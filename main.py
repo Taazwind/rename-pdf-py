@@ -16,11 +16,13 @@ from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.filemanager import MDFileManager
+from kivy.clock import Clock
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.label import MDLabel
 from src.pdf_data import extract_pdf_data
 from os import rename, listdir
 from os.path import isfile, join
+import threading
 
 KV = '''
 ScreenManager:
@@ -72,7 +74,9 @@ class RenommagePDFApp(MDApp):
             preview=False
         )
         self.selected_folder_path = None
+        self.loading_dialog = None
         return Builder.load_string(KV)
+
 
     def file_manager_open(self):
         # Ouvrir le gestionnaire de fichiers pour sélectionner un dossier
@@ -86,12 +90,24 @@ class RenommagePDFApp(MDApp):
 
     def exit_manager(self, *args):
         self.file_manager.close()
-
+    
     def extract_and_rename_all(self):
         if not self.selected_folder_path:
             self.show_dialog("Erreur", "Veuillez sélectionner un dossier")
             return
 
+        # Afficher un message "Extraction en cours..."
+        self.loading_dialog = MDDialog(
+            title="Veuillez patienter",
+            text="Extraction et renommage des fichiers en cours...",
+        )
+        self.loading_dialog.open()
+
+        # Exécuter l'extraction dans un thread séparé
+        threading.Thread(target=self._extract_and_rename_all_thread).start()
+
+
+    def _extract_and_rename_all_thread(self):
         try:
             # Parcourir tous les fichiers PDF dans le dossier sélectionné
             for filename in listdir(self.selected_folder_path):
@@ -99,7 +115,8 @@ class RenommagePDFApp(MDApp):
                     file_path = join(self.selected_folder_path, filename)
                     
                     # Extraire les données du fichier PDF
-                    pdf_data = extract_pdf_data(file_path)
+                    with open(file_path, 'rb') as pdf_file:
+                        pdf_data = extract_pdf_data(pdf_file)
                     
                     # Remplacer les espaces par des underscores
                     pdf_data = pdf_data.replace(" ", "_")
@@ -108,9 +125,20 @@ class RenommagePDFApp(MDApp):
                     new_file_path = join(self.selected_folder_path, pdf_data + ".pdf")
                     rename(file_path, new_file_path)
             
-            self.show_dialog("Succès", "Tous les fichiers PDF ont été renommés avec succès")
+            # Planifier l'affichage du message de succès sur le thread principal
+            Clock.schedule_once(lambda dt: self._on_extraction_complete("Succès", "Tous les fichiers PDF ont été renommés avec succès"))
         except Exception as e:
-            self.show_dialog("Erreur", str(e))
+            # Planifier l'affichage du message d'erreur sur le thread principal
+            Clock.schedule_once(lambda dt: self._on_extraction_complete("Erreur", str(e)))
+
+    def _on_extraction_complete(self, title, message):
+        # Fermer le dialog de chargement
+        if self.loading_dialog:
+            self.loading_dialog.dismiss()
+            self.loading_dialog = None
+
+        # Afficher le message de succès ou d'erreur
+        self.show_dialog(title, message)
 
     def quit_app(self):
         self.stop()
