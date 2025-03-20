@@ -23,6 +23,7 @@ from src.pdf_data import extract_pdf_data
 from os import rename, listdir
 from os.path import isfile, join
 import threading
+from concurrent.futures import ThreadPoolExecutor
 
 KV = '''
 ScreenManager:
@@ -99,7 +100,7 @@ class RenommagePDFApp(MDApp):
         # Afficher un message "Extraction en cours..."
         self.loading_dialog = MDDialog(
             title="Veuillez patienter",
-            text="Extraction et renommage des fichiers en cours...",
+            text="Renommage des fichiers en cours...",
         )
         self.loading_dialog.open()
 
@@ -109,27 +110,36 @@ class RenommagePDFApp(MDApp):
 
     def _extract_and_rename_all_thread(self):
         try:
-            # Parcourir tous les fichiers PDF dans le dossier sélectionné
-            for filename in listdir(self.selected_folder_path):
-                if filename.endswith(".pdf"):
+            files = [f for f in listdir(self.selected_folder_path) if f.endswith(".pdf")]
+
+            # Utiliser un ThreadPoolExecutor pour traiter les fichiers en parallèle
+            with ThreadPoolExecutor() as executor:
+                futures = []
+                for filename in files:
                     file_path = join(self.selected_folder_path, filename)
-                    
-                    # Extraire les données du fichier PDF
-                    with open(file_path, 'rb') as pdf_file:
-                        pdf_data = extract_pdf_data(pdf_file)
-                    
-                    # Remplacer les espaces par des underscores
-                    pdf_data = pdf_data.replace(" ", "_")
-                    
-                    # Renommer le fichier PDF
-                    new_file_path = join(self.selected_folder_path, pdf_data + ".pdf")
-                    rename(file_path, new_file_path)
-            
+                    futures.append(executor.submit(self._process_file, file_path))
+
+                # Attendre que tous les fichiers soient traités
+                for future in futures:
+                    future.result()
+
             # Planifier l'affichage du message de succès sur le thread principal
             Clock.schedule_once(lambda dt: self._on_extraction_complete("Succès", "Tous les fichiers PDF ont été renommés avec succès"))
         except Exception as e:
             # Planifier l'affichage du message d'erreur sur le thread principal
             Clock.schedule_once(lambda dt: self._on_extraction_complete("Erreur", str(e)))
+
+    def _process_file(self, file_path):
+        """Traiter un fichier PDF individuel."""
+        with open(file_path, 'rb') as pdf_file:
+            pdf_data = extract_pdf_data(pdf_file)
+
+        # Remplacer les espaces par des underscores
+        pdf_data = pdf_data.replace(" ", "_")
+
+        # Renommer le fichier PDF
+        new_file_path = join(self.selected_folder_path, pdf_data + ".pdf")
+        rename(file_path, new_file_path)
 
     def _on_extraction_complete(self, title, message):
         # Fermer le dialog de chargement
