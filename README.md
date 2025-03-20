@@ -31,17 +31,20 @@ Cette application permet d'extraire des données spécifiques de fichiers PDF da
 1. Clonez ce dépôt ou téléchargez les fichiers :
    ```bash
    git clone <url_du_dépôt>
-   cd rename-pdf-py``` 
+   cd rename-pdf-py
 
-2. Créez un environnement virtuel (recommandé) :
+2. Créez un environnement virtuel (recommandé): 
+   ```bash
    python -m venv .venv
    .venv\Scripts\activate  # Sur Windows
    source .venv/bin/activate  # Sur macOS/Linux
 
 3. Installez les dépendances :
+   ```bash
    pip install -r requirements.txt
 
 4. Lancez l'application :
+   ```bash
    python main.py
 
 ---
