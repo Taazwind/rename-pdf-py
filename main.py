@@ -1,20 +1,3 @@
-import sys
-import subprocess
-
-# Fonction pour installer les modules nécessaires
-def install_dependencies():
-    required_packages = ["kivy", "kivymd", "PyPDF2", "pdfquery"]
-    for package in required_packages:
-        try:
-            __import__(package)
-        except ImportError:
-            print(f"[INFO] Le package '{package}' n'est pas installé. Installation en cours...")
-            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-
-# Appeler la fonction pour vérifier et installer les dépendances
-install_dependencies()
-
-
 """
 Cette application permet d'extraire des données de tous les fichiers PDF dans un dossier et de renommer chaque fichier en utilisant les données extraites.
 
