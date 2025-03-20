@@ -67,10 +67,10 @@ Cette application permet d'extraire des données spécifiques de fichiers PDF da
 
 ## Dépendances
 
-**Kivy** : Framework pour créer des interfaces utilisateur.
-**KivyMD** : Extension de Kivy pour des composants Material Design.
-**pdfquery** : Extraction de données à partir de fichiers PDF.
-**PyInstaller** : Création d'exécutables pour distribuer l'application.
+-**Kivy** : Framework pour créer des interfaces utilisateur.
+-**KivyMD** : Extension de Kivy pour des composants Material Design.
+-**pdfquery** : Extraction de données à partir de fichiers PDF.
+-**PyInstaller** : Création d'exécutables pour distribuer l'application.
 
 Pour voir la liste complète des dépendances, consultez le fichier requirements.txt.
 
