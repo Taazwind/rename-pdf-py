@@ -24,6 +24,23 @@ from os import rename, listdir
 from os.path import isfile, join
 import threading
 from concurrent.futures import ThreadPoolExecutor
+import os
+import subprocess
+import sys
+
+def install_dependencies():
+    """Installer les dépendances à partir de requirements.txt si nécessaire."""
+    try:
+        # Vérifier si les dépendances sont installées
+        import kivy
+        import kivymd
+        import pdfquery
+    except ImportError:
+        print("Installation des dépendances...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
+
+# Appeler la fonction pour installer les dépendances
+install_dependencies()
 
 KV = '''
 ScreenManager:
