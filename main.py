@@ -98,7 +98,7 @@ class RenommagePDFApp(MDApp):
 
     def file_manager_open(self):
         # Ouvrir le gestionnaire de fichiers pour sélectionner un dossier
-        self.file_manager.show('/Users/tzvetan/')  
+        self.file_manager.show('/Users/')  
 
     def select_path(self, path):
         # Mettre à jour le chemin du dossier sélectionné dans le champ de texte
