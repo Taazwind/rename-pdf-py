@@ -19,6 +19,8 @@ from kivymd.uix.filemanager import MDFileManager
 from kivy.clock import Clock
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.label import MDLabel
+from kivymd.uix.toolbar import MDTopAppBar
+from kivymd.icon_definitions import md_icons
 from src.pdf_data import extract_pdf_data
 from os import rename, listdir
 from os.path import isfile, join
@@ -28,20 +30,6 @@ import os
 import subprocess
 import sys
 import time
-
-def install_dependencies():
-    """Installer les dépendances à partir de requirements.txt si nécessaire."""
-    try:
-        # Vérifier si les dépendances sont installées
-        import kivy
-        import kivymd
-        import pdfquery
-    except ImportError:
-        print("Installation des dépendances...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
-
-# Appeler la fonction pour installer les dépendances
-install_dependencies()
 
 KV = '''
 ScreenManager:
