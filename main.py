@@ -27,6 +27,7 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 import subprocess
 import sys
+import time
 
 def install_dependencies():
     """Installer les dépendances à partir de requirements.txt si nécessaire."""
@@ -146,17 +147,23 @@ class RenommagePDFApp(MDApp):
             # Planifier l'affichage du message d'erreur sur le thread principal
             Clock.schedule_once(lambda dt: self._on_extraction_complete("Erreur", str(e)))
 
+    import time
+
     def _process_file(self, file_path):
         """Traiter un fichier PDF individuel."""
-        with open(file_path, 'rb') as pdf_file:
-            pdf_data = extract_pdf_data(pdf_file)
+        try:
+            start_time = time.time()
+            with open(file_path, 'rb') as pdf_file:
+                pdf_data = extract_pdf_data(pdf_file)
 
-        # Remplacer les espaces par des underscores
-        pdf_data = pdf_data.replace(" ", "_")
+            pdf_data = pdf_data.replace(" ", "_")
+            new_file_path = join(self.selected_folder_path, pdf_data + ".pdf")
+            rename(file_path, new_file_path)
 
-        # Renommer le fichier PDF
-        new_file_path = join(self.selected_folder_path, pdf_data + ".pdf")
-        rename(file_path, new_file_path)
+            print(f"Fichier {file_path} traité en {time.time() - start_time:.2f} sec")
+        except Exception as e:
+            print(f"Erreur lors du traitement de {file_path}: {e}")
+
 
     def _on_extraction_complete(self, title, message):
         # Fermer le dialog de chargement

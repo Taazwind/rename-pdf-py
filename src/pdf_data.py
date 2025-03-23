@@ -1,23 +1,22 @@
-import pdfquery
+import re
+import fitz  # PyMuPDF
 
-def extract_pdf_data(url_pdf):
-    # Charger uniquement la première page pour accélérer le traitement
-    pdf = pdfquery.PDFQuery(url_pdf, laparams={"all_texts": True})
-    pdf.load(0)  # Charger uniquement la première page
+def extract_pdf_data(file_path):
+    """Extraction du Nom et Prénom pour renommer le fichier PDF."""
+    doc = fitz.open(file_path)
+    text = doc[0].get_text("text")
+    doc.close()
 
-    # Extraction des données
-    pdf_lines = pdf.pq('LTTextLineHorizontal')
-    lines = [t.text.strip() for t in pdf_lines]
+    nom_match = re.search(r"Nom\s*:\s*(.+)", text)
+    prenom_match = re.search(r"Prénom\s*:\s*(.+)", text)
 
-    # Reste du traitement...
-    stored_lines = []
-    for line in lines:
-        stored_lines.append(line)
-        if "Nom :" in line:
-            break
+    # Récupérer les valeurs trouvées ou mettre un texte par défaut
+    nom = nom_match.group(1).strip() if nom_match else "Nom_Inconnu"
+    prenom = prenom_match.group(1).strip() if prenom_match else "Prénom_Inconnu"
 
-    stored_lines.pop(3)
-    stored_lines.pop(2)
+    result_string = f"{nom}_{prenom}"
 
-    result_string = "_".join(stored_lines).replace(" ", "_")
+    # Supprimer les caractères interdits pour un nom de fichier valide
+    result_string = re.sub(r'[\/\\:*?"<>|]', '_', result_string)
+
     return result_string
